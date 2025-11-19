@@ -1,0 +1,95 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { logger } from "@formbricks/logger";
+import { ZId } from "@formbricks/types/common";
+import { TSurvey } from "@formbricks/types/surveys/types";
+import { SurveyInactive } from "@/modules/survey/link/components/survey-inactive";
+import { renderSurvey } from "@/modules/survey/link/components/survey-renderer";
+import { getResponseBySingleUseId, getSurveyWithMetadata } from "@/modules/survey/link/lib/data";
+import { checkAndValidateSingleUseId } from "@/modules/survey/link/lib/helper";
+import { getProjectByEnvironmentId } from "@/modules/survey/link/lib/project";
+import { getMetadataForLinkSurvey } from "@/modules/survey/link/metadata";
+
+interface LinkSurveyPageProps {
+  params: Promise<{
+    surveyId: string;
+  }>;
+  searchParams: Promise<{
+    suId?: string;
+    verify?: string;
+    lang?: string;
+    embed?: string;
+    preview?: string;
+  }>;
+}
+
+export const generateMetadata = async (props: LinkSurveyPageProps): Promise<Metadata> => {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  const validId = ZId.safeParse(params.surveyId);
+  if (!validId.success) {
+    notFound();
+  }
+
+  // Extract language code from URL params
+  const languageCode = typeof searchParams.lang === "string" ? searchParams.lang : undefined;
+
+  return getMetadataForLinkSurvey(params.surveyId, languageCode);
+};
+
+export const LinkSurveyPage = async (props: LinkSurveyPageProps) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+  const validId = ZId.safeParse(params.surveyId);
+  if (!validId.success) {
+    notFound();
+  }
+
+  const isPreview = searchParams.preview === "true";
+
+  // Use optimized survey data fetcher (includes all necessary data)
+  let survey: TSurvey | null = null;
+  try {
+    survey = await getSurveyWithMetadata(params.surveyId);
+  } catch (error) {
+    logger.error(error, "Error fetching survey");
+    return notFound();
+  }
+
+  const suId = searchParams.suId;
+
+  const isSingleUseSurvey = survey?.singleUse?.enabled;
+  const isSingleUseSurveyEncrypted = survey?.singleUse?.isEncrypted;
+
+  let singleUseId: string | undefined = undefined;
+
+  if (isSingleUseSurvey) {
+    const validatedSingleUseId = checkAndValidateSingleUseId(suId, isSingleUseSurveyEncrypted);
+    if (!validatedSingleUseId) {
+      const project = await getProjectByEnvironmentId(survey.environmentId);
+      return <SurveyInactive status="link invalid" project={project ?? undefined} />;
+    }
+
+    singleUseId = validatedSingleUseId;
+  }
+
+  let singleUseResponse;
+  if (isSingleUseSurvey && singleUseId) {
+    try {
+      // Use optimized response fetcher with proper caching
+      const fetchResponseFn = getResponseBySingleUseId(survey.id, singleUseId);
+      singleUseResponse = await fetchResponseFn();
+    } catch (error) {
+      logger.error("Error fetching single use response:", error);
+      singleUseResponse = undefined;
+    }
+  }
+
+  return renderSurvey({
+    survey,
+    searchParams,
+    singleUseId,
+    singleUseResponse,
+    isPreview,
+  });
+};
