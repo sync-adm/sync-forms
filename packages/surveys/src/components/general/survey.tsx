@@ -13,7 +13,7 @@ import { TUploadFileConfig } from "@formbricks/types/storage";
 import { type TSurveyQuestionId } from "@formbricks/types/surveys/types";
 import { EndingCard } from "@/components/general/ending-card";
 import { ErrorComponent } from "@/components/general/error-component";
-import { FormbricksBranding } from "@/components/general/formbricks-branding";
+// import { FormbricksBranding } from "@/components/general/formbricks-branding";
 import { LanguageSwitch } from "@/components/general/language-switch";
 import { ProgressBar } from "@/components/general/progress-bar";
 import { QuestionConditional } from "@/components/general/question-conditional";
@@ -45,7 +45,7 @@ export function Survey({
   mode,
   survey,
   styling,
-  isBrandingEnabled,
+  // isBrandingEnabled,
   onDisplay,
   onResponse,
   onClose,
@@ -814,7 +814,7 @@ export function Survey({
                 "fb-flex fb-flex-col fb-justify-center fb-gap-2",
                 isCloseButtonVisible || isLanguageSwitchVisible ? "fb-p-2" : "fb-p-3"
               )}>
-              {isBrandingEnabled ? <FormbricksBranding /> : null}
+              {/* {isBrandingEnabled ? <FormbricksBranding /> : null} */}
               {isSpamProtectionEnabled ? <RecaptchaBranding /> : null}
             </div>
           </div>
