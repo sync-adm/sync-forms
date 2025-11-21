@@ -31,7 +31,7 @@ jobs:
         with:
             registry: ghcr.io
             username: sync-adm
-            password: ${{ secrets.GHCR Master }}
+            password: ${{ secrets.GHCR_Master }}
 
       - name: Prepare build secrets (with fallbacks)
         run: |
@@ -115,7 +115,7 @@ jobs:
           echo "Ref: $GITHUB_REF" >> $GITHUB_STEP_SUMMARY
 
 # Instruções:
-# - Secret obrigatório: GHCR Master (PAT da org sync-adm com write:packages).
+# - Secret obrigatório: GHCR_Master (PAT da org sync-adm com write:packages).
 # - Segredos opcionais: BUILD_DATABASE_URL, BUILD_ENCRYPTION_KEY (32 chars), BUILD_REDIS_URL, BUILD_SENTRY_AUTH_TOKEN.
 #   Se ausentes, fallbacks válidos são usados apenas para o build.
 # - Publica: ghcr.io/sync-adm/syncforms:latest e tag histórica prod-<timestamp>-<sha>.
