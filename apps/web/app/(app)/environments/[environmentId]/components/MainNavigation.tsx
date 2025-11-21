@@ -23,7 +23,7 @@ import { TOrganization } from "@formbricks/types/organizations";
 import { TUser } from "@formbricks/types/user";
 import { NavigationLink } from "@/app/(app)/environments/[environmentId]/components/NavigationLink";
 import { isNewerVersion } from "@/app/(app)/environments/[environmentId]/lib/utils";
-import FBLogo from "@/images/formbricks-wordmark.svg";
+import FBLogo from "@/images/sync.svg";
 import { cn } from "@/lib/cn";
 import { getAccessFlags } from "@/lib/membership/utils";
 import { useSignOut } from "@/modules/auth/hooks/use-sign-out";
@@ -175,7 +175,7 @@ export const MainNavigation = ({
                     "flex items-center justify-center transition-opacity duration-100",
                     isTextVisible ? "opacity-0" : "opacity-100"
                   )}>
-                  <Image src={FBLogo} width={160} height={30} alt={t("environments.formbricks_logo")} />
+                  <Image src={FBLogo} width={96} height={30} alt={t("environments.formbricks_logo")} />
                 </Link>
               )}
               <Button

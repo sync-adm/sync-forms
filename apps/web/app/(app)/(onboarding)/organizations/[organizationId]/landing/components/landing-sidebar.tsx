@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TOrganization } from "@formbricks/types/organizations";
 import { TUser } from "@formbricks/types/user";
-import FBLogo from "@/images/formbricks-wordmark.svg";
+import FBLogo from "@/images/sync.svg";
 import { cn } from "@/lib/cn";
 import { useSignOut } from "@/modules/auth/hooks/use-sign-out";
 import { CreateOrganizationModal } from "@/modules/organization/components/CreateOrganizationModal";
@@ -44,7 +44,7 @@ export const LandingSidebar = ({ user, organization }: LandingSidebarProps) => {
       className={cn(
         "w-sidebar-collapsed z-40 flex flex-col justify-between rounded-r-xl border-r border-slate-200 bg-white pt-3 shadow-md transition-all duration-100"
       )}>
-      <Image src={FBLogo} width={160} height={30} alt={t("environments.formbricks_logo")} />
+      <Image src={FBLogo} width={96} height={30} alt={t("environments.formbricks_logo")} />
 
       <div className="flex items-center">
         <DropdownMenu>
