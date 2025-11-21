@@ -25,10 +25,6 @@ RUN corepack prepare pnpm@9.15.9 --activate
 # Install necessary build tools and compilers
 RUN apk update && apk add --no-cache cmake g++ gcc jq make openssl-dev python3
 
-# Copy the secrets handling script
-COPY apps/web/scripts/docker/read-secrets.sh /tmp/read-secrets.sh
-RUN chmod +x /tmp/read-secrets.sh
-
 # Increase Node.js memory limit as a regular build argument
 ARG NODE_OPTIONS="--max_old_space_size=8192"
 ENV NODE_OPTIONS=${NODE_OPTIONS}
@@ -48,8 +44,18 @@ WORKDIR /app
 # Prepare the build
 COPY . .
 
-# Create a .env file
-RUN touch apps/web/.env
+# Create a .env file in the root with valid placeholders for build-time validation
+# These are dummy values that pass Zod validation - real values are injected at runtime
+RUN cp .env.example .env \
+ && sed -i 's|^DATABASE_URL=.*|DATABASE_URL=postgresql://build:build@localhost:5432/formbricks|' .env \
+ && sed -i 's|^REDIS_URL=.*|REDIS_URL=redis://localhost:6379|' .env \
+ && sed -i 's|^ENCRYPTION_KEY=.*|ENCRYPTION_KEY=0123456789abcdef0123456789abcdef|' .env \
+ && grep -q '^NEXTAUTH_SECRET=' .env || echo 'NEXTAUTH_SECRET=build0123456789abcdef0123456789abcdef' >> .env \
+ && sed -i 's|^NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=build0123456789abcdef0123456789abcdef|' .env \
+ && grep -q '^CRON_SECRET=' .env || echo 'CRON_SECRET=build0123456789abcdef0123456789abcdef' >> .env \
+ && sed -i 's|^CRON_SECRET=.*|CRON_SECRET=build0123456789abcdef0123456789abcdef|' .env \
+ && grep -q '^WEBAPP_URL=' .env || echo 'WEBAPP_URL=http://localhost:3000' >> .env \
+ && grep -q '^NEXTAUTH_URL=' .env || echo 'NEXTAUTH_URL=http://localhost:3000' >> .env
 
 # Install the dependencies
 RUN pnpm install --ignore-scripts
@@ -57,13 +63,8 @@ RUN pnpm install --ignore-scripts
 # Build the database package first
 RUN pnpm build --filter=@formbricks/database
 
-# Build the project using our secret reader script
-# This mounts the secrets only during this build step without storing them in layers
-RUN --mount=type=secret,id=database_url \
-    --mount=type=secret,id=encryption_key \
-    --mount=type=secret,id=redis_url \
-    --mount=type=secret,id=sentry_auth_token \
-    /tmp/read-secrets.sh pnpm build --filter=@formbricks/web...
+# Build the web app with the placeholder .env
+RUN pnpm build --filter=@formbricks/web...
 
 # Extract Prisma version
 RUN jq -r '.devDependencies.prisma' packages/database/package.json > /prisma_version.txt
