@@ -1,4 +1,4 @@
-name: Build & Publish Container (main only)
+name: Build & Publish Container (main only, org namespace)
 
 on:
   push:
@@ -26,19 +26,56 @@ jobs:
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login GHCR
+      - name: Login GHCR (org PAT)
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+            registry: ghcr.io
+            username: sync-adm
+            password: ${{ secrets.GHCR Master }}
 
-      - name: Prepare build secrets
+      - name: Prepare build secrets (with fallbacks)
         run: |
-          echo "${{ secrets.BUILD_DATABASE_URL }}" > database_url
-          echo "${{ secrets.BUILD_ENCRYPTION_KEY }}" > encryption_key
-          echo "${{ secrets.BUILD_REDIS_URL }}" > redis_url
-          echo "${{ secrets.BUILD_SENTRY_AUTH_TOKEN }}" > sentry_auth_token
+          set -eu
+          FALLBACK_DB="postgresql://placeholder:placeholder@localhost:5432/formbricks"
+          FALLBACK_REDIS="redis://localhost:6379"
+          FALLBACK_ENCRYPTION="0123456789abcdef0123456789abcdef" # 32 chars
+          FALLBACK_SENTRY="disabled"
+
+          DB_URL="${{ secrets.BUILD_DATABASE_URL || '' }}"
+          ENC_KEY="${{ secrets.BUILD_ENCRYPTION_KEY || '' }}"
+          REDIS_URL="${{ secrets.BUILD_REDIS_URL || '' }}"
+          SENTRY_TOKEN="${{ secrets.BUILD_SENTRY_AUTH_TOKEN || '' }}"
+
+          DB_URL="$(echo "$DB_URL" | tr -d '[:space:]')"
+          ENC_KEY="$(echo "$ENC_KEY" | tr -d '[:space:]')"
+          REDIS_URL="$(echo "$REDIS_URL" | tr -d '[:space:]')"
+          SENTRY_TOKEN="$(echo "$SENTRY_TOKEN" | tr -d '[:space:]')"
+
+          if [ -z "$DB_URL" ] || ! echo "$DB_URL" | grep -qi '^postgresql://'; then
+            echo "Using fallback DATABASE_URL"
+            DB_URL="$FALLBACK_DB"
+          fi
+          if [ -z "$REDIS_URL" ] || ! echo "$REDIS_URL" | grep -qi '^redis://'; then
+            echo "Using fallback REDIS_URL"
+            REDIS_URL="$FALLBACK_REDIS"
+          fi
+          if [ -z "$ENC_KEY" ] || [ "${#ENC_KEY}" -ne 32 ]; then
+            echo "Using fallback ENCRYPTION_KEY"
+            ENC_KEY="$FALLBACK_ENCRYPTION"
+          fi
+          if [ -z "$SENTRY_TOKEN" ]; then
+            SENTRY_TOKEN="$FALLBACK_SENTRY"
+          fi
+
+          printf '%s' "$DB_URL" > database_url
+          printf '%s' "$ENC_KEY" > encryption_key
+          printf '%s' "$REDIS_URL" > redis_url
+          printf '%s' "$SENTRY_TOKEN" > sentry_auth_token
+
+          echo "DATABASE_URL=$(cat database_url)"
+          echo "REDIS_URL=$(cat redis_url)"
+          echo "ENCRYPTION_KEY length=$(wc -c < encryption_key)"
+          echo "SENTRY_AUTH_TOKEN=$(cat sentry_auth_token)"
 
       - name: Derive tags
         id: tags
@@ -78,8 +115,9 @@ jobs:
           echo "Ref: $GITHUB_REF" >> $GITHUB_STEP_SUMMARY
 
 # Instruções:
-# - Apenas push na main (ou execução manual) gera e publica imagem.
-# - Adicione segredos: BUILD_DATABASE_URL, BUILD_ENCRYPTION_KEY (32 chars), BUILD_REDIS_URL (ou dummy), BUILD_SENTRY_AUTH_TOKEN.
-# - Coolify continua apontando para ghcr.io/sync-adm/syncforms:latest; faça redeploy quando quiser.
-# - Para usar seu namespace pessoal, troque IMAGE_NAME para ghcr.io/guilherme-marin/syncforms.
-# - Se quiser preview em PR sem publicar (build sem push), pedir para adicionar job separado.
+# - Secret obrigatório: GHCR Master (PAT da org sync-adm com write:packages).
+# - Segredos opcionais: BUILD_DATABASE_URL, BUILD_ENCRYPTION_KEY (32 chars), BUILD_REDIS_URL, BUILD_SENTRY_AUTH_TOKEN.
+#   Se ausentes, fallbacks válidos são usados apenas para o build.
+# - Publica: ghcr.io/sync-adm/syncforms:latest e tag histórica prod-<timestamp>-<sha>.
+# - Coolify usa ghcr.io/sync-adm/syncforms:latest (redeploy manual).
+# - Tornar pacote público na primeira vez (Package Settings → Public).
