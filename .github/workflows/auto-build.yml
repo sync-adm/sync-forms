@@ -33,7 +33,7 @@ jobs:
             username: sync-adm
             password: ${{ secrets.GHCR_Master }}
 
-      - name: Prepare build secrets (with fallbacks)
+      - name: Prepare build secrets (with some fallbacks)
         run: |
           set -eu
           FALLBACK_DB="postgresql://placeholder:placeholder@localhost:5432/formbricks"
