@@ -84,7 +84,7 @@ export const LinkSurveyWrapper = ({
               {isPreview && (
                 <div className="fixed left-0 top-0 flex w-full items-center justify-between bg-slate-600 p-2 px-4 text-center text-sm text-white shadow-sm">
                   <div />
-                  Survey Preview 👀
+                  Preview da Pesquisa
                   <ResetProgressButton onClick={handleResetSurvey} />
                 </div>
               )}

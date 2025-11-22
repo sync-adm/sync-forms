@@ -28,9 +28,9 @@ export const SurveyLinkUsed = ({ singleUseMessage, project }: SurveyLinkUsedProp
       </div>
       {(!project || project.linkSurveyBranding) && (
         <div>
-          <Link href="https://formbricks.com">
+          {/* <Link href="https://formbricks.com">
             <Image src={footerLogo as string} alt="Brand logo" className="mx-auto w-40" />
-          </Link>
+          </Link> */}
         </div>
       )}
     </div>
