@@ -5,13 +5,11 @@ import { LoadingSpinner } from "@/modules/ui/components/loading-spinner";
 interface SurveyLoadingAnimationProps {
   isWelcomeCardEnabled: boolean;
   isBackgroundLoaded?: boolean;
-  isBrandingEnabled: boolean;
 }
 
 export const SurveyLoadingAnimation = ({
   isWelcomeCardEnabled,
   isBackgroundLoaded = true,
-  isBrandingEnabled,
 }: SurveyLoadingAnimationProps) => {
   const [isHidden, setIsHidden] = useState(false);
   const [minTimePassed, setMinTimePassed] = useState(false);
@@ -31,8 +29,6 @@ export const SurveyLoadingAnimation = ({
       setIsMediaLoaded(true);
     }
   }, [cardId]);
-
-  isBrandingEnabled = false;
 
   useEffect(() => {
     if (!isSurveyPackageLoaded) return;
