@@ -173,8 +173,7 @@ export const LinkSurvey = ({
       publicDomain={publicDomain}
       IS_FORMBRICKS_CLOUD={IS_FORMBRICKS_CLOUD}
       IMPRINT_URL={IMPRINT_URL}
-      PRIVACY_URL={PRIVACY_URL}
-      isBrandingEnabled={project.linkSurveyBranding}>
+      PRIVACY_URL={PRIVACY_URL}>
       <SurveyInline
         appUrl={publicDomain}
         environmentId={survey.environmentId}

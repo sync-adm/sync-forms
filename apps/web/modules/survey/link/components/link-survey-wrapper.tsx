@@ -23,7 +23,6 @@ interface LinkSurveyWrapperProps {
   PRIVACY_URL?: string;
   IS_FORMBRICKS_CLOUD: boolean;
   publicDomain: string;
-  isBrandingEnabled: boolean;
 }
 
 export const LinkSurveyWrapper = ({
@@ -40,7 +39,6 @@ export const LinkSurveyWrapper = ({
   PRIVACY_URL,
   IS_FORMBRICKS_CLOUD,
   publicDomain,
-  isBrandingEnabled,
 }: LinkSurveyWrapperProps) => {
   //for embedded survey strip away all surrounding css
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
@@ -59,10 +57,7 @@ export const LinkSurveyWrapper = ({
           styling.cardArrangement?.linkSurveys === "straight" && "pt-6",
           styling.cardArrangement?.linkSurveys === "casual" && "px-6 py-10"
         )}>
-        <SurveyLoadingAnimation
-          isWelcomeCardEnabled={isWelcomeCardEnabled}
-          isBrandingEnabled={isBrandingEnabled}
-        />
+        <SurveyLoadingAnimation isWelcomeCardEnabled={isWelcomeCardEnabled} />
         {children}
       </div>
     );
@@ -72,7 +67,6 @@ export const LinkSurveyWrapper = ({
         <SurveyLoadingAnimation
           isWelcomeCardEnabled={isWelcomeCardEnabled}
           isBackgroundLoaded={isBackgroundLoaded}
-          isBrandingEnabled={isBrandingEnabled}
         />
         <MediaBackground
           surveyType={surveyType}
