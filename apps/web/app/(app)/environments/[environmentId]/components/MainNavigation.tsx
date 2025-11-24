@@ -8,7 +8,6 @@ import {
   MessageCircle,
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
-  RocketIcon,
   UserCircleIcon,
   UserIcon,
 } from "lucide-react";

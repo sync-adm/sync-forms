@@ -126,7 +126,7 @@ export const LoginForm = ({
   const [totpLogin, setTotpLogin] = useState(false);
   const [totpBackup, setTotpBackup] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const inviteToken = callbackUrl ? new URL(callbackUrl).searchParams.get("token") : null;
+  // const inviteToken = callbackUrl ? new URL(callbackUrl).searchParams.get("token") : null;
   const [lastLoggedInWith, setLastLoggedInWith] = useState("");
 
   useEffect(() => {
