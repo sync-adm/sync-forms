@@ -342,7 +342,7 @@ describe("License Core Logic", () => {
       });
     });
 
-    test("should return inactive license if ENTERPRISE_LICENSE_KEY is not set in env", async () => {
+    test("should return active license with all features if ENTERPRISE_LICENSE_KEY is not set in env", async () => {
       // Reset all mocks first
       vi.resetAllMocks();
       mockCache.get.mockReset();
@@ -367,8 +367,23 @@ describe("License Core Logic", () => {
       const license = await getEnterpriseLicense();
 
       expect(license).toEqual({
-        active: false,
-        features: null,
+        active: true,
+        features: {
+          isMultiOrgEnabled: true,
+          projects: null,
+          twoFactorAuth: true,
+          sso: true,
+          whitelabel: true,
+          removeBranding: true,
+          contacts: true,
+          ai: true,
+          saml: true,
+          spamProtection: true,
+          auditLogs: true,
+          multiLanguageSurveys: true,
+          accessControl: true,
+          quotas: true,
+        },
         lastChecked: expect.any(Date),
         isPendingDowngrade: false,
         fallbackLevel: "default" as const,
@@ -378,7 +393,7 @@ describe("License Core Logic", () => {
       expect(mockCache.withCache).not.toHaveBeenCalled();
     });
 
-    test("should handle fetch throwing an error and use grace period or return inactive", async () => {
+    test("should handle fetch throwing an error and use grace period or return active with all features", async () => {
       const { getEnterpriseLicense } = await import("./license");
       const fetch = (await import("node-fetch")).default as Mock;
 
@@ -392,8 +407,23 @@ describe("License Core Logic", () => {
 
       const license = await getEnterpriseLicense();
       expect(license).toEqual({
-        active: false,
-        features: null,
+        active: true,
+        features: {
+          isMultiOrgEnabled: true,
+          projects: null,
+          twoFactorAuth: true,
+          sso: true,
+          whitelabel: true,
+          removeBranding: true,
+          contacts: true,
+          ai: true,
+          saml: true,
+          spamProtection: true,
+          auditLogs: true,
+          multiLanguageSurveys: true,
+          accessControl: true,
+          quotas: true,
+        },
         lastChecked: expect.any(Date),
         isPendingDowngrade: false,
         fallbackLevel: "default" as const,

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { TSurveyClosedMessage } from "@formbricks/types/surveys/types";
 import { getTranslate } from "@/lingodotdev/server";
 import { Button } from "@/modules/ui/components/button";
-import footerLogo from "../lib/footerlogo.svg";
 
 export const SurveyInactive = async ({
   status,
@@ -55,16 +54,17 @@ export const SurveyInactive = async ({
             : descriptions[status]}
         </p>
         {showCTA && (
-          <Button className="mt-2" asChild>
-            <Link href="https://formbricks.com">{t("s.create_your_own")}</Link>
-          </Button>
+          // <Button className="mt-2" asChild>
+          //   <Link href="https://formbricks.com">{t("s.create_your_own")}</Link>
+          // </Button>
+          <></>
         )}
       </div>
       {(!project || project.linkSurveyBranding) && (
         <div>
-          <Link href="https://formbricks.com">
+          {/* <Link href="https://formbricks.com">
             <Image src={footerLogo as string} alt="Brand logo" className="mx-auto w-40" />
-          </Link>
+          </Link> */}
         </div>
       )}
     </div>
