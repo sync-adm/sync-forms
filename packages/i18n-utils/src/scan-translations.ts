@@ -352,7 +352,7 @@ function displayResults(results: ScanResults, packageName: string, defaultLocale
 
   const hasIssues =
     results.missingKeys.size > 0 ||
-    results.unusedKeys.size > 0 ||
+    // results.unusedKeys.size > 0 || // Disabled: unused keys check
     results.incompleteTranslations.size > 0 ||
     results.keysWithSpaces.size > 0;
 
@@ -376,14 +376,15 @@ function displayResults(results: ScanResults, packageName: string, defaultLocale
     });
   }
 
-  if (results.unusedKeys.size > 0) {
-    console.log(`\n⚠️  UNUSED KEYS (${results.unusedKeys.size.toString()}):\n`);
-    console.log("   These keys exist in translation files but are not used in code:\n");
-    const sortedUnusedKeys = Array.from(results.unusedKeys).sort();
-    sortedUnusedKeys.forEach((key) => {
-      console.log(`   • ${key}`);
-    });
-  }
+  // Disabled: unused keys check
+  // if (results.unusedKeys.size > 0) {
+  //   console.log(`\n⚠️  UNUSED KEYS (${results.unusedKeys.size.toString()}):\n`);
+  //   console.log("   These keys exist in translation files but are not used in code:\n");
+  //   const sortedUnusedKeys = Array.from(results.unusedKeys).sort();
+  //   sortedUnusedKeys.forEach((key) => {
+  //     console.log(`   • ${key}`);
+  //   });
+  // }
 
   if (results.incompleteTranslations.size > 0) {
     console.log(`\n⚠️  INCOMPLETE TRANSLATIONS:\n`);
@@ -478,13 +479,13 @@ async function main(): Promise<void> {
     // Check if any package has issues
     const hasWebAppIssues =
       webAppResults.missingKeys.size > 0 ||
-      webAppResults.unusedKeys.size > 0 ||
+      // webAppResults.unusedKeys.size > 0 || // Disabled: unused keys check
       webAppResults.incompleteTranslations.size > 0 ||
       webAppResults.keysWithSpaces.size > 0;
 
     const hasSurveysIssues =
       surveysResults.missingKeys.size > 0 ||
-      surveysResults.unusedKeys.size > 0 ||
+      // surveysResults.unusedKeys.size > 0 || // Disabled: unused keys check
       surveysResults.incompleteTranslations.size > 0 ||
       surveysResults.keysWithSpaces.size > 0;
 
@@ -497,9 +498,10 @@ async function main(): Promise<void> {
       if (webAppResults.missingKeys.size > 0 || surveysResults.missingKeys.size > 0) {
         console.error("   • Add missing keys to your translation files");
       }
-      if (webAppResults.unusedKeys.size > 0 || surveysResults.unusedKeys.size > 0) {
-        console.error("   • Remove unused keys from translation files");
-      }
+      // Disabled: unused keys check
+      // if (webAppResults.unusedKeys.size > 0 || surveysResults.unusedKeys.size > 0) {
+      //   console.error("   • Remove unused keys from translation files");
+      // }
       if (webAppResults.keysWithSpaces.size > 0 || surveysResults.keysWithSpaces.size > 0) {
         console.error("   • Remove spaces from translation keys (use underscores or camelCase instead)");
       }

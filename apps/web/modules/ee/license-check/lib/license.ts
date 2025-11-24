@@ -341,9 +341,25 @@ export const getEnterpriseLicense = reactCache(
     validateConfig();
 
     if (!env.ENTERPRISE_LICENSE_KEY || env.ENTERPRISE_LICENSE_KEY.length === 0) {
+      // Enable all enterprise features when no license key is configured
       return {
-        active: false,
-        features: null,
+        active: true,
+        features: {
+          isMultiOrgEnabled: true,
+          projects: null, // unlimited
+          twoFactorAuth: true,
+          sso: true,
+          whitelabel: true,
+          removeBranding: true,
+          contacts: true,
+          ai: true,
+          saml: true,
+          spamProtection: true,
+          auditLogs: true,
+          multiLanguageSurveys: true,
+          accessControl: true,
+          quotas: true,
+        },
         lastChecked: new Date(),
         isPendingDowngrade: false,
         fallbackLevel: "default" as const,

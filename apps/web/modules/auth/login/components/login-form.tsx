@@ -266,13 +266,13 @@ export const LoginForm = ({
 
         {publicSignUpEnabled && !totpLogin && isMultiOrgEnabled && (
           <div className="mt-9 text-center text-xs">
-            <span className="leading-5 text-slate-500">{t("auth.login.new_to_formbricks")}</span>
+            {/* <span className="leading-5 text-slate-500">{t("auth.login.new_to_formbricks")}</span>
             <br />
             <Link
               href={inviteToken ? `/auth/signup?inviteToken=${inviteToken}` : "/auth/signup"}
               className="font-semibold text-slate-600 underline hover:text-slate-700">
               {t("auth.login.create_an_account")}
-            </Link>
+            </Link> */}
           </div>
         )}
       </div>
