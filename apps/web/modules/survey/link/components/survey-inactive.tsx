@@ -1,10 +1,7 @@
 import { Project } from "@prisma/client";
 import { CalendarClockIcon, CheckCircle2Icon, HelpCircleIcon, PauseCircleIcon } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { TSurveyClosedMessage } from "@formbricks/types/surveys/types";
 import { getTranslate } from "@/lingodotdev/server";
-import { Button } from "@/modules/ui/components/button";
 
 export const SurveyInactive = async ({
   status,
