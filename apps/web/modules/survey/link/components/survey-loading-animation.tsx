@@ -32,6 +32,8 @@ export const SurveyLoadingAnimation = ({
     }
   }, [cardId]);
 
+  isBrandingEnabled = false;
+
   useEffect(() => {
     if (!isSurveyPackageLoaded) return;
 
